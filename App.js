@@ -1,14 +1,39 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, Button , Component } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { RNCamera } from 'react-native-camera'
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { DataTable } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
+import { render } from 'react-dom';
 
-var items = [];
+var itemList;
+
+async function addNewItem(Quantity, Name) {
+  itemList = [...itemList, [Quantity, Name]]
+  console.log("Updated Items", itemList);
+  await AsyncStorage.setItem(
+    "@storedItem", 
+    JSON.stringify(itemList)
+  );
+}
+
+async function getItemList() {
+  let itemListT = await AsyncStorage.getItem("@storedItem");
+  console.log("items list", itemListT);
+  itemList = itemListT ? JSON.parse(itemListT) : [];
+}
+
+async function clearAsyncStorage(){
+  AsyncStorage.clear();
+  itemList = [];
+}
+
+
 
 function CameraScreen() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -30,21 +55,23 @@ function CameraScreen() {
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     setText(data);
-    console.log('Type: ' + type + '\nData: ' + data);
+    //console.log('Type: ' + type + '\nData: ' + data);
 
     var check = 0
 
     //add check to see if item already exists
-    items.map(indItem => {
-      if (indItem.Name == data){
-        indItem.Quantity++
+    itemList.map(indItem => {
+      if (indItem[1] == data){
+        indItem[0]++
         check = 1
       }
     })
 
     if(check == 0){
-      items.push({Quantity:1,Name:data.toString(),})
+      //items.push({Quantity:1,Name:data.toString(),});
+      addNewItem(1, data.toString());
     }
+    console.log("after add " + itemList)
   };
 
   if (hasPermission === null) {
@@ -78,41 +105,23 @@ function CameraScreen() {
 }
 
 function ListScreen() {
+  var headerIn=["Quantity","Name"]
   return (
     <View>
       <Text style={{marginTop:30, marginBottom:10, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>List</Text>
-      <DataTable>
-        <DataTable.Header>
-          <DataTable.Title>Quantity</DataTable.Title>
-          <DataTable.Title>Name</DataTable.Title>
-          <DataTable.Title numeric>Actions</DataTable.Title>
-        </DataTable.Header>
-
-        {
-          items.map(indItem => {
-          return (
-            <DataTable.Row key={indItem.Name}>
-              <DataTable.Cell>
-                {indItem.Quantity}
-              </DataTable.Cell>
-              <DataTable.Cell>
-                {indItem.Name}
-              </DataTable.Cell>
-              <DataTable.Cell>
-                Delete
-              </DataTable.Cell>
-            </DataTable.Row>
-        )})}
-
-      </DataTable>
+        <Table borderStyle={{borderWidth: 1, borderColor: '#ffa1d2'}}>
+          <Row data={headerIn}/>
+          <Rows data={itemList}/>
+        </Table>
     </View>
-  );
+  )
 }
 
 function SettingsScreen() {
   return (
     <View>
       <Text style={{marginTop:30, marginBottom:10, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>Settings</Text>
+        <Button onPress={clearAsyncStorage} title="Clear Async Storage"></Button>
     </View>
   );
 }
@@ -120,6 +129,8 @@ function SettingsScreen() {
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+
+  getItemList();
 
   return (
     <NavigationContainer>
