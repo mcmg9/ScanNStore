@@ -4,22 +4,24 @@ import { Text, View, StyleSheet, Button , Component } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { RNCamera } from 'react-native-camera'
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { DataTable } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
-import { render } from 'react-dom';
 
 var itemList;
 
-async function addNewItem(Quantity, Name) {
-  itemList = [...itemList, [Quantity, Name]]
-  console.log("Updated Items", itemList);
+async function saveItems(){
   await AsyncStorage.setItem(
     "@storedItem", 
     JSON.stringify(itemList)
   );
+}
+
+async function addNewItem(Quantity, Name) {
+  itemList = [...itemList, [Quantity, Name]]
+  console.log("Updated Items", itemList);
+  saveItems()
 }
 
 async function getItemList() {
@@ -64,6 +66,7 @@ function CameraScreen() {
       if (indItem[1] == data){
         indItem[0]++
         check = 1
+        saveItems()
       }
     })
 
@@ -109,7 +112,7 @@ function ListScreen() {
   return (
     <View>
       <Text style={{marginTop:30, marginBottom:10, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>List</Text>
-        <Table borderStyle={{borderWidth: 1, borderColor: '#ffa1d2'}}>
+        <Table borderStyle={{borderWidth: 1, borderColor: 'tomato'}}>
           <Row data={headerIn}/>
           <Rows data={itemList}/>
         </Table>
