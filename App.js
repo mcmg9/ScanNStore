@@ -8,8 +8,21 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import { DataTable } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
+import { Audio } from 'expo-av';
 
 var itemList;
+
+
+async function playSound(setSound) {
+  //console.log('Loading Sound');
+  const { sound } = await Audio.Sound.createAsync(
+     require('./BarcodeScan.mp3')
+  );
+  setSound(sound);
+
+  //console.log('Playing Sound');
+  await sound.playAsync(); 
+}
 
 var Meta = require('html-metadata-parser');
 
@@ -64,6 +77,7 @@ async function clearAsyncStorage(){
 
 
 function CameraScreen() {
+  const [sound, setSound] = React.useState();
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [text, setText] = useState('Scanning...');
@@ -81,6 +95,7 @@ function CameraScreen() {
   }, []);
 
   const handleBarCodeScanned = ({ type, data }) => {
+    playSound(setSound)
     setScanned(true);
     setText(data);
     //console.log('Type: ' + type + '\nData: ' + data);
