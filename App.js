@@ -11,6 +11,17 @@ import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-ta
 
 var itemList;
 
+var Meta = require('html-metadata-parser');
+
+async function getTitle (url){
+
+  var result = await Meta.parser(url);
+
+  return(result.og.title);
+
+};
+
+
 async function saveItems(){
   await AsyncStorage.setItem(
     "@storedItem", 
@@ -19,14 +30,29 @@ async function saveItems(){
 }
 
 async function addNewItem(Quantity, Name) {
-  itemList = [...itemList, [Quantity, Name]]
-  console.log("Updated Items", itemList);
+  var url = "https://www.buycott.com/upc/" + Name
+  var title = await getTitle (url)
+
+  var check = 0
+    //add check to see if item already exists
+    itemList.map(indItem => {
+      if (indItem[1] == title){
+        indItem[0]++
+        check = 1
+        saveItems()
+      }
+    })
+
+  if (check == 0){
+    itemList = [...itemList, [Quantity, title]]
+  }
+  //console.log("Updated Items", itemList);
   saveItems()
 }
 
 async function getItemList() {
   let itemListT = await AsyncStorage.getItem("@storedItem");
-  console.log("items list", itemListT);
+  //console.log("items list", itemListT);
   itemList = itemListT ? JSON.parse(itemListT) : [];
 }
 
@@ -59,22 +85,8 @@ function CameraScreen() {
     setText(data);
     //console.log('Type: ' + type + '\nData: ' + data);
 
-    var check = 0
-
-    //add check to see if item already exists
-    itemList.map(indItem => {
-      if (indItem[1] == data){
-        indItem[0]++
-        check = 1
-        saveItems()
-      }
-    })
-
-    if(check == 0){
-      //items.push({Quantity:1,Name:data.toString(),});
-      addNewItem(1, data.toString());
-    }
-    console.log("after add " + itemList)
+    addNewItem(1, data.toString());
+    //console.log("after add " + itemList)
   };
 
   if (hasPermission === null) {
