@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button , Component } from 'react-native';
+import { Text, View, StyleSheet, Button , Component , TouchableOpacity} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -9,6 +9,7 @@ import { DataTable } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import { Audio } from 'expo-av';
+import RNRestart from 'react-native-restart';
 
 var itemList;
 
@@ -34,6 +35,10 @@ async function getTitle (url){
 
 };
 
+async function removeItem(index) {
+  itemList.splice(index, 1)
+  saveItems()
+}
 
 async function saveItems(){
   await AsyncStorage.setItem(
@@ -57,7 +62,7 @@ async function addNewItem(Quantity, Name) {
     })
 
   if (check == 0){
-    itemList = [...itemList, [Quantity, title]]
+    itemList = [...itemList, [Quantity, title, "Delete"]]
   }
   //console.log("Updated Items", itemList);
   saveItems()
@@ -135,16 +140,34 @@ function CameraScreen() {
 }
 
 function ListScreen() {
-  var headerIn=["Quantity","Name"]
-  return (
-    <View>
-      <Text style={{marginTop:30, marginBottom:10, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>List</Text>
-        <Table borderStyle={{borderWidth: 1, borderColor: 'tomato'}}>
-          <Row data={headerIn}/>
-          <Rows data={itemList}/>
+  var headerIn=["Quantity","Name","Actions"]
+
+    const element = (data, index) => (
+      <TouchableOpacity onPress={() => removeItem(index)}>
+        <View style={styles.btn}>
+          <Text style={styles.btnText}>Delete</Text>
+        </View>
+      </TouchableOpacity>
+    );
+    return (
+      <View>
+        <Text style={{marginTop:30, marginBottom:10, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>List</Text>
+        <Table borderStyle={{borderColor: 'transparent'}}>
+          <Row data={headerIn} style={styles.head} textStyle={styles.text}/>
+          {
+            itemList.map((rowData, index) => (
+              <TableWrapper key={index} style={styles.row}>
+                {
+                  rowData.map((cellData, cellIndex) => (
+                    <Cell key={cellIndex} data={cellIndex === 2 ? element(cellData, index) : cellData} textStyle={styles.text}/>
+                  ))
+                }
+              </TableWrapper>
+            ))
+          }
         </Table>
-    </View>
-  )
+      </View>
+    )
 }
 
 function SettingsScreen() {
@@ -213,5 +236,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderRadius: 30,
     backgroundColor: 'tomato'
-  }
+  },
+    head: { height: 40 },
+    text: { margin: 6 },
+    row: { flexDirection: 'row' },
+    btn: { width: 58, height: 18, backgroundColor: 'tomato',  borderRadius: 2 },
+    btnText: { textAlign: 'center', color: '#fff' }
 });
