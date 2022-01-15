@@ -35,9 +35,10 @@ async function getTitle (url){
 
 };
 
-async function removeItem(index) {
+async function removeItem(index, navigation) {
   itemList.splice(index, 1)
   saveItems()
+  navigation.navigate('Deleted')
 }
 
 async function saveItems(){
@@ -139,11 +140,11 @@ function CameraScreen() {
   );
 }
 
-function ListScreen() {
+function ListScreen({ navigation }) {
   var headerIn=["Quantity","Name","Actions"]
 
     const element = (data, index) => (
-      <TouchableOpacity onPress={() => removeItem(index)}>
+      <TouchableOpacity onPress={() => removeItem(index, navigation)}>
         <View style={styles.btn}>
           <Text style={styles.btnText}>Delete</Text>
         </View>
@@ -179,6 +180,15 @@ function SettingsScreen() {
   );
 }
 
+function DeletedScreen({navigation}) {
+  return (
+    <View>
+      <Text style={{marginTop:30, marginBottom:10, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>Item Successfully Deleted</Text>
+        <Button onPress={() => navigation.navigate('List')} title="Okay"></Button>
+    </View>
+  );
+}
+
 const Tab = createBottomTabNavigator();
 
 export default function App() {
@@ -189,6 +199,13 @@ export default function App() {
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={({ route }) => ({
+          tabBarButton: [
+            "Deleted"
+          ].includes(route.name)
+            ? () => {
+                return null;
+              }
+            : undefined,
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
 
@@ -212,6 +229,7 @@ export default function App() {
         <Tab.Screen name="Camera" component={CameraScreen} />
         <Tab.Screen name="List" component={ListScreen} options={{ unmountOnBlur: true }} />
         <Tab.Screen name="Settings" component={SettingsScreen} />
+        <Tab.Screen name="Deleted" component={DeletedScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );
