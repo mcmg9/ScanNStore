@@ -52,18 +52,21 @@ async function addNewItem(Quantity, Name) {
   var url = "https://www.buycott.com/upc/" + Name
   var title = await getTitle (url)
 
+  var date = new Date().toISOString();
+
   var check = 0
     //add check to see if item already exists
     itemList.map(indItem => {
       if (indItem[1] == title){
         indItem[0]++
+        indItem[2] = date
         check = 1
         saveItems()
       }
     })
 
   if (check == 0){
-    itemList = [...itemList, [Quantity, title, "Delete"]]
+    itemList = [...itemList, [Quantity, title, date, "Delete"]]
   }
   //console.log("Updated Items", itemList);
   saveItems()
@@ -141,7 +144,7 @@ function CameraScreen() {
 }
 
 function ListScreen({ navigation }) {
-  var headerIn=["Quantity","Name","Actions"]
+  var headerIn=["Quantity","Name","Date","Actions"]
 
     const element = (data, index) => (
       <TouchableOpacity onPress={() => removeItem(index, navigation)}>
@@ -160,7 +163,7 @@ function ListScreen({ navigation }) {
               <TableWrapper key={index} style={styles.row}>
                 {
                   rowData.map((cellData, cellIndex) => (
-                    <Cell key={cellIndex} data={cellIndex === 2 ? element(cellData, index) : cellData} textStyle={styles.text}/>
+                    <Cell key={cellIndex} data={cellIndex === 3 ? element(cellData, index) : cellData} textStyle={styles.text}/>
                   ))
                 }
               </TableWrapper>
