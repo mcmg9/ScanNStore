@@ -20,6 +20,30 @@ function getSortNum(){
   }
 }
 
+function sortItems(){
+  if (sortType == "Name"){
+    itemList.sort(function(a, b){
+      if(a[1] < b[1]) { 
+        return -1; 
+      }
+      if(a[1] > b[1]) { 
+        return 1; 
+      }
+      return 0;
+    })
+  }else if(sortType == "Date"){
+    itemList.sort(function(a, b){
+      if(a[2] < b[2]) { 
+        return -1; 
+      }
+      if(a[2] > b[2]) { 
+        return 1; 
+      }
+      return 0;
+    })
+  }
+}
+
 async function setSort(sort) {
   //console.log("Before " + sortType)
   sortType = sort
@@ -28,9 +52,7 @@ async function setSort(sort) {
     sort
   );
   //console.log("After " + sortType)
-
-  //sort here
-
+  saveItems()
 }
 
 async function playSound(setSound) {
@@ -47,11 +69,8 @@ async function playSound(setSound) {
 var Meta = require('html-metadata-parser');
 
 async function getTitle (url){
-
   var result = await Meta.parser(url);
-
   return(result.og.title);
-
 };
 
 function removeCheck(index, navigation){
@@ -65,6 +84,7 @@ async function removeItem(index, navigation) {
 }
 
 async function saveItems(){
+  sortItems()
   await AsyncStorage.setItem(
     "@storedItem", 
     JSON.stringify(itemList)
