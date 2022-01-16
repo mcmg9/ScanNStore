@@ -9,10 +9,31 @@ import { DataTable } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import { Audio } from 'expo-av';
-import RNRestart from 'react-native-restart';
+import RadioButtonRN from 'radio-buttons-react-native';
 
 var itemList;
+var sortType;
 
+function getSortNum(){
+  if(sortType == "Date"){
+    return(1)
+  }else{
+    return(2)
+  }
+}
+
+async function setSort(sort) {
+  //console.log("Before " + sortType)
+  sortType = sort
+  await AsyncStorage.setItem(
+    "@sortType", 
+    sort
+  );
+  //console.log("After " + sortType)
+
+  //sort here
+
+}
 
 async function playSound(setSound) {
   //console.log('Loading Sound');
@@ -74,8 +95,10 @@ async function addNewItem(Quantity, Name) {
 
 async function getItemList() {
   let itemListT = await AsyncStorage.getItem("@storedItem");
+  let sort = await AsyncStorage.getItem("@sortType");
   //console.log("items list", itemListT);
   itemList = itemListT ? JSON.parse(itemListT) : [];
+  sortType = sort
 }
 
 async function clearAsyncStorage(){
@@ -175,10 +198,21 @@ function ListScreen({ navigation }) {
 }
 
 function SettingsScreen() {
+  let data = [{
+    label: 'Date',
+  }, {
+    label: 'Name',
+  }];
   return (
     <View>
       <Text style={{marginTop:30, marginBottom:10, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>Settings</Text>
-        <Button onPress={clearAsyncStorage} title="Clear Async Storage"></Button>
+      <Button onPress={clearAsyncStorage} title="Clear Async Storage" style="padding: 5px 10px;"></Button>
+      <Text style={{marginTop:50, marginBottom:10, fontSize: 20, textAlign: 'center', fontWeight: 'bold',}}>Sort By</Text>
+      <RadioButtonRN
+        data={data}
+        selectedBtn={(e) => setSort(e.label)}
+        initial={getSortNum()}
+      />
     </View>
   );
 }
