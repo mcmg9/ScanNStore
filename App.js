@@ -1,13 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Button , Component , TouchableOpacity, ScrollView} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { DataTable } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
+import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
 import { Audio } from 'expo-av';
 import RadioButtonRN from 'radio-buttons-react-native';
 
@@ -56,10 +54,14 @@ async function getTitle (url){
 
 };
 
+function removeCheck(index, navigation){
+  navigation.navigate('Deleted', {index})
+}
+
 async function removeItem(index, navigation) {
   itemList.splice(index, 1)
   saveItems()
-  navigation.navigate('Deleted')
+  navigation.navigate('List')
 }
 
 async function saveItems(){
@@ -177,7 +179,7 @@ function ListScreen({ navigation }) {
   var headerIn=["Quantity","Name","Date","Actions"]
 
     const element = (data, index) => (
-      <TouchableOpacity onPress={() => removeItem(index, navigation)}>
+      <TouchableOpacity onPress={() => removeCheck(index, navigation)}>
         <View style={styles.btn}>
           <Text style={styles.btnText}>Delete</Text>
         </View>
@@ -226,11 +228,12 @@ function SettingsScreen() {
   );
 }
 
-function DeletedScreen({navigation}) {
+function DeletedScreen({route, navigation}) {
+  var index = (route.params).index;
   return (
     <View>
-      <Text style={{marginTop:200, marginBottom:100, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>Item Successfully Deleted</Text>
-        <Button onPress={() => navigation.navigate('List')} title="Okay"></Button>
+      <Text style={{marginTop:200, marginBottom:100, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>Are you sure?</Text>
+        <Button onPress={() => removeItem(index, navigation)} title="Yes"></Button><Button onPress={() => navigation.navigate('List')} title="No"></Button>
     </View>
   );
 }
