@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button , Component , TouchableOpacity} from 'react-native';
+import { Text, View, StyleSheet, Button , Component , TouchableOpacity, ScrollView} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -71,7 +71,14 @@ async function saveItems(){
 
 async function addNewItem(Quantity, Name) {
   var url = "https://www.buycott.com/upc/" + Name
-  var title = await getTitle (url)
+  var title
+  try {
+    title = await getTitle (url)
+  }
+  catch(err) {
+    title = Name
+    console.log("Error 400 with item: " + Name)
+  }
 
   var date = new Date().toISOString();
 
@@ -179,20 +186,22 @@ function ListScreen({ navigation }) {
     return (
       <View>
         <Text style={{marginTop:30, marginBottom:10, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>List</Text>
-        <Table borderStyle={{borderColor: 'transparent'}}>
-          <Row data={headerIn} style={styles.head} textStyle={styles.text}/>
-          {
-            itemList.map((rowData, index) => (
-              <TableWrapper key={index} style={styles.row}>
-                {
-                  rowData.map((cellData, cellIndex) => (
-                    <Cell key={cellIndex} data={cellIndex === 3 ? element(cellData, index) : cellData} textStyle={styles.text}/>
-                  ))
-                }
-              </TableWrapper>
-            ))
-          }
-        </Table>
+        <ScrollView vertical={true}>
+          <Table borderStyle={{borderColor: 'transparent'}}>
+            <Row data={headerIn} style={styles.head} textStyle={styles.text}/>
+            {
+              itemList.map((rowData, index) => (
+                <TableWrapper key={index} style={styles.row}>
+                  {
+                    rowData.map((cellData, cellIndex) => (
+                      <Cell key={cellIndex} data={cellIndex === 3 ? element(cellData, index) : cellData} textStyle={styles.text}/>
+                    ))
+                  }
+                </TableWrapper>
+              ))
+            }
+          </Table>
+        </ScrollView>
       </View>
     )
 }
@@ -220,7 +229,7 @@ function SettingsScreen() {
 function DeletedScreen({navigation}) {
   return (
     <View>
-      <Text style={{marginTop:30, marginBottom:10, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>Item Successfully Deleted</Text>
+      <Text style={{marginTop:200, marginBottom:100, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>Item Successfully Deleted</Text>
         <Button onPress={() => navigation.navigate('List')} title="Okay"></Button>
     </View>
   );
