@@ -207,9 +207,8 @@ function ListScreen({ navigation }) {
       </TouchableOpacity>
     );
     return (
-      <View>
+      <View style={{marginBottom: 150}}>
         <Text style={{marginTop:30, marginBottom:10, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>List</Text>
-        <Text style={{marginTop:10, marginBottom:10, fontSize: 20, textAlign: 'center', fontWeight: 'bold',}}>Number of unique items: {itemList.length}</Text>
         <ScrollView vertical={true}>
           <Table borderStyle={{borderColor: 'transparent'}}>
             <Row data={headerIn} style={styles.head} textStyle={styles.text}/>
@@ -226,6 +225,7 @@ function ListScreen({ navigation }) {
             }
           </Table>
         </ScrollView>
+        <Text style={{marginTop:10, marginBottom:10, fontSize: 18, textAlign: 'center', fontWeight: 'bold',}}>Number of unique items: {itemList.length}</Text>
       </View>
     )
 }
