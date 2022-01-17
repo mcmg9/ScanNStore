@@ -102,8 +102,9 @@ async function addNewItem(Quantity, Name) {
     console.log("Error 400 with item: " + Name)
   }
 
-  var date = new Date().toISOString();
-
+  var offset = -5;
+  var date = new Date( new Date().getTime() + offset * 3600 * 1000).toISOString()
+  
   var check = 0
     //add check to see if item already exists
     itemList.map(indItem => {
@@ -208,6 +209,7 @@ function ListScreen({ navigation }) {
     return (
       <View>
         <Text style={{marginTop:30, marginBottom:10, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>List</Text>
+        <Text style={{marginTop:10, marginBottom:10, fontSize: 20, textAlign: 'center', fontWeight: 'bold',}}>Number of unique items: {itemList.length}</Text>
         <ScrollView vertical={true}>
           <Table borderStyle={{borderColor: 'transparent'}}>
             <Row data={headerIn} style={styles.head} textStyle={styles.text}/>
