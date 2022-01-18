@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button , Component , TouchableOpacity, ScrollView} from 'react-native';
+import { Text, View, StyleSheet, Button , Component , TouchableOpacity, ScrollView, Image} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -58,7 +58,7 @@ async function setSort(sort) {
 async function playSound(setSound) {
   //console.log('Loading Sound');
   const { sound } = await Audio.Sound.createAsync(
-     require('./BarcodeScan.mp3')
+     require('./assets/BarcodeScan.mp3')
   );
   setSound(sound);
 
@@ -239,13 +239,14 @@ function SettingsScreen() {
   return (
     <View>
       <Text style={{marginTop:30, marginBottom:10, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>Settings</Text>
-      <Button onPress={clearAsyncStorage} title="Clear Async Storage" style="padding: 5px 10px;"></Button>
+      <Button onPress={clearAsyncStorage} title="Clear Item List" style="padding: 5px 10px;" color='brown' marginTop></Button>
       <Text style={{marginTop:50, marginBottom:10, fontSize: 20, textAlign: 'center', fontWeight: 'bold',}}>Sort By</Text>
       <RadioButtonRN
         data={data}
         selectedBtn={(e) => setSort(e.label)}
         initial={getSortNum()}
       />
+      <Image style={{marginTop:50, width:180, height:180, alignSelf: 'center'}} source={require('./assets/icon.png')} />
     </View>
   );
 }
@@ -255,7 +256,7 @@ function DeletedScreen({route, navigation}) {
   return (
     <View>
       <Text style={{marginTop:200, marginBottom:100, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>Are you sure?</Text>
-        <Button onPress={() => removeItem(index, navigation)} title="Yes"></Button><Button onPress={() => navigation.navigate('List')} title="No"></Button>
+        <Button onPress={() => removeItem(index, navigation)} title="Yes" color='brown'></Button><Button onPress={() => navigation.navigate('List')} title="No" color='brown' style={{marginTop:50}}></Button>
     </View>
   );
 }
