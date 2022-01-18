@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "Scan n' Store",
+    "slug": "ScanNStore-slug",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mcmg9.ScanNStoreslug"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.mcmg9.ScanNStoreslug"
+    },
+    "web": {
+      "favicon": "./assets/icon.png"
+    }
+  }
+}
