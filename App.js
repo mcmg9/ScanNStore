@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button , Component , TouchableOpacity, ScrollView, Image} from 'react-native';
+import { Text, View, StyleSheet, Button , Component , TouchableOpacity, ScrollView, Image, Switch} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -8,9 +8,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
 import { Audio } from 'expo-av';
 import RadioButtonRN from 'radio-buttons-react-native';
+import ToggleSwitch from 'toggle-switch-react-native'
 
 var itemList;
 var sortType;
+var simpDate = false;
+
+async function setSimpItem() {
+  await AsyncStorage.setItem(
+    "@simpDate", 
+    JSON.stringify(simpDate)
+  );
+}
 
 function getSortNum(){
   if(sortType == "Date"){
@@ -126,9 +135,16 @@ async function addNewItem(Quantity, Name) {
 async function getItemList() {
   let itemListT = await AsyncStorage.getItem("@storedItem");
   let sort = await AsyncStorage.getItem("@sortType");
+  let simp = await AsyncStorage.getItem("@simpDate");
   //console.log("items list", itemListT);
   itemList = itemListT ? JSON.parse(itemListT) : [];
   sortType = sort
+  if(simp == 'true'){
+    simpDate = true
+  }else{
+    simpDate = false
+  }
+  //simpDate = simp
 }
 
 async function clearAsyncStorage(){
@@ -191,7 +207,7 @@ function CameraScreen() {
       </View>
       <Text style={styles.maintext}>{text}</Text>
 
-      {scanned && <Button title={'Scan another item'} onPress={() => setScanned(false)} color='tomato' />}
+      {scanned && <Button title={'Scan another item'} onPress={() => setScanned(false)} color='brown' />}
     </View>
   );
 }
@@ -217,7 +233,7 @@ function ListScreen({ navigation }) {
                 <TableWrapper key={index} style={styles.row}>
                   {
                     rowData.map((cellData, cellIndex) => (
-                      <Cell key={cellIndex} data={cellIndex === 3 ? element(cellData, index) : cellData} textStyle={styles.text}/>
+                      <Cell key={cellIndex} data={cellIndex === 3 ? element(cellData, index) : (cellIndex === 2 && simpDate === true ? cellData.split('T')[0] : cellData)} textStyle={styles.text}/>
                     ))
                   }
                 </TableWrapper>
@@ -236,6 +252,13 @@ function SettingsScreen() {
   }, {
     label: 'Name',
   }];
+  const [enabled, setEnabled] = useState(simpDate)
+
+  const toggleSwitch = () => {
+    setEnabled(oldValue => !oldValue)
+    simpDate = !enabled
+    setSimpItem()
+  }
   return (
     <View>
       <Text style={{marginTop:30, marginBottom:10, fontSize: 30, textAlign: 'center', fontWeight: 'bold',}}>Settings</Text>
@@ -245,8 +268,20 @@ function SettingsScreen() {
         data={data}
         selectedBtn={(e) => setSort(e.label)}
         initial={getSortNum()}
+        activeColor={"brown"}
       />
-      <Image style={{marginTop:50, width:180, height:180, alignSelf: 'center'}} source={require('./assets/icon.png')} />
+      <Text style={{marginTop:50, marginBottom:10, fontSize: 20, textAlign: 'center', fontWeight: 'bold',}}>Simplify Dates</Text>
+      <ToggleSwitch
+        style={{alignSelf: 'center'}}
+        isOn={enabled}
+        onColor="tomato"
+        offColor="brown"
+        //label="Simplify Dates"
+        //labelStyle={{ color: "black", fontWeight: "900" }}
+        size="large"
+        onToggle={toggleSwitch}
+      />
+      <Image style={{marginTop:20, width:180, height:180, alignSelf: 'center'}} source={require('./assets/icon.png')} />
     </View>
   );
 }
