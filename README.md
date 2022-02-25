@@ -6,7 +6,7 @@ App to help organize inventory by scanning barcodes and storing + displaying the
 
 Scanning an item retrieves the barcode and searches for the product information.
 
-![Scan1](https://user-images.githubusercontent.com/51424788/155809179-25cc22df-4e4b-4b18-aa9a-7c42f9c7b798.jpg)
+![Scan1 (1)](https://user-images.githubusercontent.com/51424788/155809383-24cf2dc9-a196-4b95-b9c8-a2c8a3d6b968.jpg)
 
 The item is stored in a list and displayed, allowing the user to remove it.
 
