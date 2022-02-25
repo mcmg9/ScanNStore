@@ -10,8 +10,8 @@ Scanning an item retrieves the barcode and searches for the product information.
 
 The item is stored in a list and displayed, allowing the user to remove it.
 
-![Scan2](https://user-images.githubusercontent.com/51424788/155809194-e6970ded-b68e-4d12-860b-43b7e0655220.jpg)
+![Scan2 (1)](https://user-images.githubusercontent.com/51424788/155809445-05ffe2a9-3c98-4689-a583-5b843b5f1803.jpg)
 
 The settings include options such as clearing the entire list, sorting by date or name, and simplifiying the dates.
 
-![Scan3](https://user-images.githubusercontent.com/51424788/155809205-34e28e34-570f-470f-91df-6b5ce8fa34fa.jpg)
+![Scan3 (1)](https://user-images.githubusercontent.com/51424788/155809461-299e499b-c8c5-4fd9-945f-3df6bcccbf6e.jpg)
